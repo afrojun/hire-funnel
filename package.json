@@ -12,30 +12,29 @@
     "heroku-postbuild": "npm run build"
   },
   "dependencies": {
-    "nuxt": "^1.0.0",
-    "vuetify": "^1.0.0",
-    "ajv": "^6.1.1",
-    "moment": "^2.20.1",
-    "graphql": "^0.12.3",
+    "nuxt": "^1.4.0",
+    "vuetify": "^1.0.8",
+    "graphql": "^0.13.2",
     "graphql-tag": "^2.8.0",
-    "apollo-client": "2.2.5",
-    "vue-apollo": "^3.0.0-beta.4",
-    "apollo-cache-inmemory": "^1.1.0",
-    "apollo-link": "^1.0.3",
-    "apollo-link-http": "^1.2.0"
+    "apollo-client": "^2.2.7",
+    "vue-apollo": "^3.0.0-beta.5",
+    "apollo-cache-inmemory": "^1.1.11",
+    "apollo-link": "^1.2.1",
+    "apollo-link-http": "^1.5.3",
+    "moment": "^2.21.0"
   },
   "devDependencies": {
-    "babel-eslint": "^7.2.3",
-    "babel-plugin-transform-imports": "^1.4.1",
-    "eslint": "^4.3.0",
-    "eslint-config-standard": "^10.2.1",
-    "eslint-loader": "^1.9.0",
-    "eslint-plugin-html": "^3.1.1",
-    "eslint-plugin-import": "^2.7.0",
-    "eslint-plugin-node": "^5.1.1",
-    "eslint-plugin-promise": "^3.5.0",
+    "babel-eslint": "^8.2.2",
+    "babel-plugin-transform-imports": "^1.5.0",
+    "eslint": "^4.19.0",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-loader": "^2.0.0",
+    "eslint-plugin-html": "^4.0.2",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.7.0",
     "eslint-plugin-standard": "^3.0.1",
     "stylus": "^0.54.5",
-    "stylus-loader": "^3.0.1"
+    "stylus-loader": "^3.0.2"
   }
 }
