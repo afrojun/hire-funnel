@@ -4,6 +4,8 @@ type User @model {
   lastName: String!
   email: String! @isUnique
   dateOfBirth: DateTime
+  timeZone: String! @defaultValue(value: "UTC")
+  language: String! @defaultValue(value: "en")
   createdAt: DateTime!
   updatedAt: DateTime!
 
@@ -16,13 +18,23 @@ type User @model {
 type Organization @model {
   id: ID! @isUnique
   name: String!
-  address: String
+  address: Address @relation(name: "OrganizationAddress")
   website: String
   createdAt: DateTime!
   updatedAt: DateTime!
 
   organizationUsers: [OrganizationUser!]! @relation(name: "Organizations")
   funnels: [Funnel!]! @relation(name: "OrganizationFunnels")
+}
+
+type Address @model {
+  id: ID! @isUnique
+  building: String!
+  street: String!
+  suburb: String
+  city: String!
+  country: String!
+  organization: Organization! @relation(name: "OrganizationAddress")
 }
 
 enum OrganizationUserRole {
