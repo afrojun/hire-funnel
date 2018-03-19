@@ -1,5 +1,6 @@
 type User @model {
   id: ID! @isUnique
+  slug: String! @isUnique
   firstName: String!
   lastName: String!
   email: String! @isUnique
@@ -17,6 +18,7 @@ type User @model {
 # Entity that is looking to hire someone
 type Organization @model {
   id: ID! @isUnique
+  slug: String! @isUnique
   name: String!
   address: Address @relation(name: "OrganizationAddress")
   website: String
@@ -55,6 +57,7 @@ type OrganizationUser @model {
 # The entire process to hire for a given Position, made up of multiple stages
 type Funnel @model {
   id: ID! @isUnique
+  slug: String! @isUnique
   jobTitle: String!
   description: String
   organization: Organization! @relation(name: "OrganizationFunnels")
