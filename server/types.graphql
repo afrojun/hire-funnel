@@ -1,0 +1,145 @@
+type User @model {
+  id: ID! @isUnique
+  firstName: String!
+  lastName: String!
+  email: String! @isUnique
+  dateOfBirth: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+
+  organizationUsers: [OrganizationUser!]! @relation(name: "Users")
+  interviewers: [Interviewer!]! @relation(name: "InterviewerUsers")
+  funnels: [Funnel!]! @relation(name: "FunnelManagers")
+}
+
+# Entity that is looking to hire someone
+type Organization @model {
+  id: ID! @isUnique
+  name: String!
+  address: String
+  website: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+
+  organizationUsers: [OrganizationUser!]! @relation(name: "Organizations")
+  funnels: [Funnel!]! @relation(name: "OrganizationFunnels")
+}
+
+enum OrganizationUserRole {
+  Admin,
+  Interviewer
+}
+
+# Association between an Organization and a User
+type OrganizationUser @model {
+  id: ID! @isUnique
+  organization: Organization! @relation(name: "Organizations")
+  user: User! @relation(name: "Users")
+  role: OrganizationUserRole!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+# The entire process to hire for a given Position, made up of multiple stages
+type Funnel @model {
+  id: ID! @isUnique
+  jobTitle: String!
+  description: String
+  organization: Organization! @relation(name: "OrganizationFunnels")
+  # User with authority to override decisions and break ties
+  manager: User! @relation(name: "FunnelManagers")
+  offerStage: Stage @relation(name: "OfferStageOfFunnel")
+  rejectionStage: Stage @relation(name: "RejectionStageOfFunnel")
+  # Start-to-finish SLA for a given candidate (2-week default)
+  sla: Int! @defaultValue(value: 1209600)
+  offerEmailTemplate: String!
+  rejectionEmailTemplate: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+
+  stages: [Stage!]! @relation(name: "FunnelStages")
+  candidates: [Candidate!]! @relation(name: "FunnelCandidates")
+}
+
+enum AdvancePolicy {
+  Unanimous,
+  Majority,
+  Override # Hiring manager decision
+}
+
+# A particular round of interviews
+type Stage @model {
+  id: ID! @isUnique
+  funnel: Funnel! @relation(name: "FunnelStages")
+  nextStage: Stage @relation(name: "NextStageOfFunnel")
+  name: String!
+  description: String
+  # SLA for a particular stage (24-hours default)
+  sla: Int! @defaultValue(value: 86400)
+  advancePolicy: AdvancePolicy! @defaultValue(value: Unanimous)
+  createdAt: DateTime!
+  updatedAt: DateTime!
+
+  candidates: [Candidate!]! @relation(name: "StageCandidates")
+  interviews: [Interview!]! @relation(name: "StageInterviews")
+  offerStageFunnel: Funnel @relation(name: "OfferStageOfFunnel")
+  rejectionStageFunnel: Funnel @relation(name: "RejectionStageOfFunnel")
+}
+
+# A candidate that has applied for a particular role and is in a funnel
+type Candidate @model {
+  id: ID! @isUnique
+  funnel: Funnel! @relation(name: "FunnelCandidates")
+  stage: Stage! @relation(name: "StageCandidates")
+  feedback: CandidateFeedback @relation(name: "FeedbackOfCandidate")
+  createdAt: DateTime!
+  updatedAt: DateTime!
+
+  interviews: [Interview!]! @relation(name: "CandidateInterviews")
+}
+
+type Interview @model {
+  id: ID! @isUnique
+  stage: Stage! @relation(name: "StageInterviews")
+  date: DateTime!
+  location: String!
+  candidate: Candidate! @relation(name: "CandidateInterviews")
+  advanceDecision: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+
+  interviewers: [Interviewer!]! @relation(name: "Interviewers")
+}
+
+enum InterviewerFeedbackSentiment {
+  StrongYes,
+  Yes,
+  No,
+  StrongNo
+}
+
+type Interviewer @model {
+  id: ID! @isUnique
+  user: User! @relation(name: "InterviewerUsers")
+  interview: Interview! @relation(name: "Interviewers")
+  sentiment: InterviewerFeedbackSentiment!
+  feedback: String!
+  feedbackTemplate: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum CandidateFeedbackSentiment {
+  Positive,
+  Neutral,
+  Negative
+}
+
+type CandidateFeedback @model {
+  id: ID! @isUnique
+  candidate: Candidate! @relation(name: "FeedbackOfCandidate")
+  sentiment: CandidateFeedbackSentiment!
+  feedback: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
