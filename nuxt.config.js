@@ -44,7 +44,7 @@ module.exports = {
     vendor: [
       '~/plugins/vuetify.js',
       'graphql-tag',
-      'vue-apollo',
+      'vue-apollo'
     ],
     extractCSS: true,
     /*
