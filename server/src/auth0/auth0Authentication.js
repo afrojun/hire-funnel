@@ -42,6 +42,9 @@ const verifyToken = token =>
     })
   })
 
+const generateSlug = nickname =>
+  nickname
+
 // Retrieves the Graphcool user record using the Auth0 user id
 const getGraphcoolUser = (auth0UserId, api) =>
   api
@@ -58,29 +61,46 @@ const getGraphcoolUser = (auth0UserId, api) =>
     .then(queryResult => queryResult.User)
 
 // Creates a new User record.
-const createGraphCoolUser = (auth0UserId, email, api) =>
-  api
-    .request(
-      `
-        mutation createUser($auth0UserId: String!, $email: String) {
-          createUser(
-            auth0UserId: $auth0UserId
-            email: $email
-          ){
-            id
-          }
+const createGraphCoolUser = (auth0UserId, userInfo, api) =>
+  api.request(
+    `
+      mutation createUser(
+        $auth0UserId: String!,
+        $email: String!,
+        $firstName: String!,
+        $lastName: String!,
+        $nickname: String!,
+        $slug: String!,
+        $locale: String!
+      ) {
+        createUser(
+          auth0UserId: $auth0UserId
+          email: $email
+          firstName: $firstName
+          lastName: $lastName
+          nickname: $nickname
+          slug: $slug
+          locale: $locale
+        ) {
+          id
         }
-      `,
-      { auth0UserId, email }
-    )
-    .then(queryResult => queryResult.createUser)
+      }
+    `,
+    {
+      auth0UserId,
+      slug: generateSlug(userInfo.nickname),
+      firstName: userInfo.given_name,
+      lastName: userInfo.family_name,
+      nickname: userInfo.nickname,
+      email: userInfo.email,
+      locale: userInfo.locale
+    }
+  ).then(queryResult => queryResult.createUser)
 
-const fetchAuth0Email = accessToken =>
+const fetchAuth0UserInfo = accessToken =>
   fetch(
     `https://${process.env.AUTH0_DOMAIN}/userinfo?access_token=${accessToken}`
-  )
-    .then(response => response.json())
-    .then(json => json.email)
+  ).then(response => response.json())
 
 export default async event => {
   try {
@@ -98,12 +118,8 @@ export default async event => {
     let graphCoolUser = await getGraphcoolUser(decodedToken.sub, api)
     // If the user doesn't exist, a new record is created.
     if (graphCoolUser === null) {
-      // fetch email if scope includes it
-      let email = null
-      if (decodedToken.scope.includes('email')) {
-        email = await fetchAuth0Email(accessToken)
-      }
-      graphCoolUser = await createGraphCoolUser(decodedToken.sub, email, api)
+      const userInfo = await fetchAuth0UserInfo(accessToken)
+      graphCoolUser = await createGraphCoolUser(decodedToken.sub, userInfo, api)
     }
 
     // custom exp does not work yet, see https://github.com/graphcool/graphcool-lib/issues/19
