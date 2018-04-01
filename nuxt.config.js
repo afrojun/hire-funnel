@@ -15,6 +15,9 @@ module.exports = {
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' }
+    ],
+    script: [
+      { src: 'https://cdn.auth0.com/js/auth0/9.3.1/auth0.min.js' }
     ]
   },
   plugins: [
@@ -28,15 +31,27 @@ module.exports = {
   */
   loading: { color: '#3B8070' },
   /*
+  ** Add apollo module
+  */
+  modules: ['@nuxtjs/apollo'],
+  /*
+  ** Give apollo module options
+  */
+  apollo: {
+    clientConfigs: {
+      default: '~/apollo/client-configs/default.js'
+    }
+  },
+  /*
   ** Build configuration
   */
   build: {
     babel: {
       plugins: [
-        ["transform-imports", {
-          "vuetify": {
-            "transform": "vuetify/es5/components/${member}",
-            "preventFullImport": true
+        ['transform-imports', {
+          'vuetify': {
+            'transform': "vuetify/es5/components/${member}",
+            'preventFullImport': true
           }
         }]
       ]

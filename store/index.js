@@ -1,11 +1,14 @@
 export const state = () => ({
-  sidebar: false,
-  profile: null,
-  wtfMoments: null
+  user: null,
+  organization: null
 })
 
 export const mutations = {
-  toggleSidebar (state) {
-    state.sidebar = !state.sidebar
+  setUser (state, user) {
+    state.user = user
+  },
+
+  setOrganization (state, organization) {
+    state.organization = organization
   }
 }
