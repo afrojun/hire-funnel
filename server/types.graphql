@@ -46,6 +46,11 @@ enum OrganizationUserRole {
   Interviewer
 }
 
+enum FunnelStatusEnum {
+  Active,
+  Completed
+}
+
 # The entire process to hire for a given Position, made up of multiple stages
 type Funnel @model {
   id: ID! @isUnique
@@ -61,6 +66,7 @@ type Funnel @model {
   sla: Int! @defaultValue(value: 1209600)
   offerEmailTemplate: String!
   rejectionEmailTemplate: String!
+  status: FunnelStatusEnum! @defaultValue(value: Active)
   createdAt: DateTime!
   updatedAt: DateTime!
 
