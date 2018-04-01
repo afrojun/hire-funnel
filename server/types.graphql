@@ -9,15 +9,15 @@ type User @model {
   timeZone: String
   locale: String! @defaultValue(value: "en")
   auth0UserId: String! @isUnique
+  organization: Organization @relation(name: "OrganizationUsers")
+  role: OrganizationUserRole
   createdAt: DateTime!
   updatedAt: DateTime!
 
-  organizationUsers: [OrganizationUser!]! @relation(name: "Users")
   interviewers: [Interviewer!]! @relation(name: "InterviewerUsers")
   funnels: [Funnel!]! @relation(name: "FunnelManagers")
 }
 
-# Entity that is looking to hire someone
 type Organization @model {
   id: ID! @isUnique
   slug: String! @isUnique
@@ -27,7 +27,7 @@ type Organization @model {
   createdAt: DateTime!
   updatedAt: DateTime!
 
-  organizationUsers: [OrganizationUser!]! @relation(name: "Organizations")
+  users: [User!]! @relation(name: "OrganizationUsers")
   funnels: [Funnel!]! @relation(name: "OrganizationFunnels")
 }
 
@@ -44,16 +44,6 @@ type Address @model {
 enum OrganizationUserRole {
   Admin,
   Interviewer
-}
-
-# Association between an Organization and a User
-type OrganizationUser @model {
-  id: ID! @isUnique
-  organization: Organization! @relation(name: "Organizations")
-  user: User! @relation(name: "Users")
-  role: OrganizationUserRole!
-  createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 # The entire process to hire for a given Position, made up of multiple stages
