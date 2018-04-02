@@ -10,7 +10,7 @@ export default {
   },
 
   computed: {
-    ...mapState(['user', 'organization'])
+    ...mapState(['user'])
   },
 
   methods: {
@@ -38,9 +38,9 @@ export default {
           <v-btn v-if="!user" class="primary" dark large @click="authenticateUser">
             Try HireFunnel for free!
           </v-btn>
-          <create-org-modal v-if="user && !organization" />
+          <create-org-modal v-if="user && !user.organization" />
           <v-btn
-            v-if="user && organization"
+            v-if="user && user.organization"
             class="purple lighten-1"
             dark
             large

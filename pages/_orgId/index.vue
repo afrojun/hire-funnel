@@ -31,7 +31,7 @@ export default {
 </script>
 
 <template>
-  <v-layout column v-if="user && user.organization && isOrgIndexRoute">
+  <v-layout column v-if="user && user.organization">
     <v-flex xs12 sm6>
       <v-container fluid grid-list-md>
         <v-layout row wrap>

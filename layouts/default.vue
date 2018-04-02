@@ -54,7 +54,6 @@ export default {
     ...mapMutations(['setUser']),
 
     authenticateUser () {
-      console.log('authenticateUser')
       webAuth().authorize()
     }
   },

@@ -8,8 +8,6 @@ export default {
     return { title: 'Index' }
   },
 
-  middleware: 'anonymous',
-
   components: {
     Home
   }
