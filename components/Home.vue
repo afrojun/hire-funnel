@@ -15,7 +15,7 @@ export default {
 
   methods: {
     authenticateUser () {
-      webAuth.authorize()
+      webAuth().authorize()
     }
   },
 

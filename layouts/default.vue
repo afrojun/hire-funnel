@@ -51,7 +51,7 @@ export default {
 
     authenticateUser () {
       console.log('authenticateUser')
-      webAuth.authorize()
+      webAuth().authorize()
     }
   },
 

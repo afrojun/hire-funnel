@@ -1,16 +1,19 @@
 import Cookie from 'js-cookie'
 import auth0 from 'auth0-js'
 
-export const webAuth = new auth0.WebAuth({
-  audience: 'https://hirefunnel.eu.auth0.com/api/v2/',
-  clientID: '77CRmShfKo04gkXEBRginosvIcE4QkDN',
-  domain: 'hirefunnel.eu.auth0.com',
-  redirectUri: 'http://localhost:3000/auth/callback',
-  responseType: 'token'
-})
+const getBaseUrl = () => `${window.location.protocol}//${window.location.host}`
 
+export const webAuth = () => {
+  return new auth0.WebAuth({
+    audience: 'https://hirefunnel.eu.auth0.com/api/v2/',
+    clientID: '77CRmShfKo04gkXEBRginosvIcE4QkDN',
+    domain: 'hirefunnel.eu.auth0.com',
+    redirectUri: `${getBaseUrl()}/auth/callback`,
+    responseType: 'token'
+  })
+}
 export const parseHash = () => {
-  const token = webAuth.parseHash((err, authResult) => {
+  const token = webAuth().parseHash((err, authResult) => {
     if (err) return console.error(err)
     let accessToken = null
     if (authResult && authResult.accessToken) {
@@ -71,10 +74,8 @@ export const getUserIdFromLocalStorage = () => {
   return window.localStorage.userId
 }
 
-const getBaseUrl = () => `${window.location.protocol}//${window.location.host}`
-
 export const setSecret = (secret) => window.localStorage.setItem('secret', secret)
 
 export const checkSecret = (secret) => window.localStorage.secret === secret
 
-export const logout = () => webAuth.logout({ returnTo: getBaseUrl() })
+export const logout = () => webAuth().logout({ returnTo: getBaseUrl() })
