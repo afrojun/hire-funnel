@@ -1,0 +1,36 @@
+query UserQuery($id: ID!) {
+  User(id: $id) {
+    id
+    auth0UserId
+    email
+    slug
+    firstName
+    lastName
+    nickname
+    locale
+    timeZone
+    role
+    organization {
+      id
+      slug
+      name
+      website
+      funnels {
+        slug
+        jobTitle
+        description
+        sla
+        candidates {
+          id
+        }
+      }
+    }
+  }
+}
+
+mutation AuthenticateUser($accessToken: String!) {
+  authenticateUser(accessToken: $accessToken) {
+    id
+    token
+  }
+}

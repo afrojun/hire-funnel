@@ -2,6 +2,14 @@
 import { mapState, mapMutations } from 'vuex'
 
 export default {
+  name: 'OrgSettings',
+
+  head () {
+    return { title: 'Organization Settings' }
+  },
+
+  middleware: 'authenticated',
+
   computed: {
     ...mapState(['user', 'organization'])
   },

@@ -1,22 +1,24 @@
 <script>
 import { mapState, mapMutations } from 'vuex'
 import routeMixin from '~/lib/routeMixin'
+import { webAuth } from '~/utils/auth'
+import { UserQuery } from '~/graphql/users'
+import EventBus from '~/utils/eventBus'
 
 export default {
+  data () {
+    return {
+      userId: null
+    }
+  },
+
   mixins: [routeMixin],
 
   mounted () {
-    console.log(this.user)
-    this.setUser({
-      id: 'user-1',
-      slug: 'arjun',
-      firstName: 'Arjun',
-      lastName: 'Radhakrishnan',
-      nickname: 'afrojun',
-      email: 'admin@hirefunnel.co',
-      auth0UserId: 'auth0-id-1'
+    EventBus.$on('FetchUser', ({ id }) => {
+      this.userId = id
     })
-    this.setOrganization({
+    /* this.setOrganization({
       id: 'org-1',
       slug: 'rosterpocalypse',
       name: 'Rosterpocalypse',
@@ -37,11 +39,7 @@ export default {
           candidates: [{ id: 'can-3' }, { id: 'can-4' }]
         }
       ]
-    })
-  },
-
-  updated () {
-    console.log(this.$route.name)
+    }) */
   },
 
   computed: {
@@ -53,6 +51,24 @@ export default {
 
     authenticateUser () {
       console.log('authenticateUser')
+      webAuth.authorize()
+    }
+  },
+
+  apollo: {
+    graphqlUser: {
+      query: UserQuery,
+      variables () {
+        return {
+          id: this.userId
+        }
+      },
+      skip () {
+        return !this.userId
+      },
+      update (data) {
+        this.setUser({ user: data.User })
+      }
     }
   }
 }
@@ -71,6 +87,9 @@ export default {
         </span>
         <v-btn icon @click.prevent="$router.push(userRoute)">
           <v-icon medium>face</v-icon>
+        </v-btn>
+        <v-btn icon @click.prevent="$router.push(logoutRoute)">
+          <v-icon medium>exit_to_app</v-icon>
         </v-btn>
       </span>
       <v-btn icon v-else @click="authenticateUser">

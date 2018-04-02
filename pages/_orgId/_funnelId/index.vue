@@ -2,6 +2,14 @@
 import { mapState, mapMutations } from 'vuex'
 
 export default {
+  name: 'Funnel',
+
+  head () {
+    return { title: 'Funnel' }
+  },
+
+  middleware: 'authenticated',
+
   computed: {
     ...mapState(['user', 'organization'])
   },

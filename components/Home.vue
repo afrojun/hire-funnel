@@ -1,5 +1,6 @@
 <script>
 import { mapState } from 'vuex'
+import { webAuth } from '~/utils/auth'
 import routeMixin from '~/lib/routeMixin'
 import CreateOrgModal from '~/components/CreateOrgModal'
 
@@ -10,6 +11,12 @@ export default {
 
   computed: {
     ...mapState(['user', 'organization'])
+  },
+
+  methods: {
+    authenticateUser () {
+      webAuth.authorize()
+    }
   },
 
   mixins: [routeMixin]
@@ -28,13 +35,7 @@ export default {
         >
           <h1 class="white--text mb-2 display-1 text-xs-center">Hire Funnel</h1>
           <div class="subheading mb-3 text-xs-center">The simplest way to manage your hiring process</div>
-          <v-btn
-            v-if="!user"
-            class="primary"
-            dark
-            large
-            to="/"
-          >
+          <v-btn v-if="!user" class="primary" dark large @click="authenticateUser">
             Try HireFunnel for free!
           </v-btn>
           <create-org-modal v-if="user && !organization" />

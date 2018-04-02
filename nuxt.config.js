@@ -15,9 +15,6 @@ module.exports = {
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' }
-    ],
-    script: [
-      { src: 'https://cdn.auth0.com/js/auth0/9.3.1/auth0.min.js' }
     ]
   },
   plugins: [
@@ -41,6 +38,16 @@ module.exports = {
     clientConfigs: {
       default: '~/apollo/client-configs/default.js'
     }
+  },
+  generate: {
+    fallback: true
+  },
+  /*
+  ** Environement variables
+  */
+  env: {
+    AUTH0_CLIENT_ID: '',
+    AUTH0_CLIENT_DOMAIN: ''
   },
   /*
   ** Build configuration

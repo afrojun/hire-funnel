@@ -4,6 +4,14 @@ import { mapState } from 'vuex'
 import routeMixin from '~/lib/routeMixin'
 
 export default {
+  name: 'Organization',
+
+  head () {
+    return { title: 'Organization' }
+  },
+
+  middleware: 'authenticated',
+
   computed: {
     ...mapState(['user', 'organization'])
   },
