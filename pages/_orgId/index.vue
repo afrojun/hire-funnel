@@ -1,7 +1,7 @@
 <script>
 import moment from 'moment'
 import { mapState } from 'vuex'
-import routeMixin from '~/lib/routeMixin'
+import routeMixin from '~/mixins/routeMixin'
 
 export default {
   name: 'Organization',

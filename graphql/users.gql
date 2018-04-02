@@ -1,30 +1,24 @@
+#import '~/graphql/organizations'
+
+fragment UserFields on User {
+  id
+  auth0UserId
+  email
+  slug
+  firstName
+  lastName
+  nickname
+  locale
+  timeZone
+  role
+  organization {
+    ...OrganizationFields
+  }
+}
+
 query UserQuery($id: ID!) {
-  User(id: $id) {
-    id
-    auth0UserId
-    email
-    slug
-    firstName
-    lastName
-    nickname
-    locale
-    timeZone
-    role
-    organization {
-      id
-      slug
-      name
-      website
-      funnels {
-        slug
-        jobTitle
-        description
-        sla
-        candidates {
-          id
-        }
-      }
-    }
+  user: User(id: $id) {
+    ...UserFields
   }
 }
 

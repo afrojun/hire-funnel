@@ -1,0 +1,17 @@
+#import '~/graphql/funnels'
+
+fragment OrganizationFields on Organization {
+  id
+  slug
+  name
+  website
+  funnels {
+    ...FunnelFields
+  }
+}
+
+mutation CreateOrganization($name: String! $slug: String! $website: String $usersIds: [ID!]) {
+  createOrganization(name: $name slug: $slug website: $website usersIds: $usersIds) {
+    ...OrganizationFields
+  }
+}

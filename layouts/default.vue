@@ -1,6 +1,6 @@
 <script>
 import { mapState, mapMutations } from 'vuex'
-import routeMixin from '~/lib/routeMixin'
+import routeMixin from '~/mixins/routeMixin'
 import { webAuth, getUserIdFromLocalStorage } from '~/utils/auth'
 import { UserQuery } from '~/graphql/users'
 import EventBus from '~/utils/eventBus'
@@ -70,7 +70,7 @@ export default {
         return !this.userId
       },
       update (data) {
-        this.setUser({ user: data.User })
+        this.setUser({ user: data.user })
       }
     }
   }

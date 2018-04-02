@@ -1,8 +1,68 @@
 <script>
+import shortid from 'shortid'
+import CreateOrganization from '~/graphql/organizations'
+import { UserQuery } from '~/graphql/users'
+import routeMixin from '~/mixins/routeMixin'
+import slugify from '~/utils/slugify'
+
 export default {
+  props: {
+    user: {
+      required: true,
+      type: Object
+    }
+  },
+
   data () {
     return {
-      dialog: false
+      dialog: false,
+      name: null,
+      website: null,
+      slugSuffix: shortid.generate()
+    }
+  },
+
+  mixins: [routeMixin],
+
+  computed: {
+    slug () {
+      return `${slugify(this.name)}-${this.slugSuffix}`
+    }
+  },
+
+  methods: {
+    async createOrganization () {
+      try {
+        const userId = this.user.id
+        await this.$apollo.mutate({
+          mutation: CreateOrganization,
+          variables: {
+            name: this.name,
+            slug: this.slug,
+            website: this.website,
+            usersIds: [userId]
+          },
+          update (store, { data: { createOrganization } }) {
+            const data = store.readQuery({
+              query: UserQuery,
+              variables: { id: userId }
+            })
+
+            data.user.organization = createOrganization
+
+            store.writeQuery({
+              query: UserQuery,
+              variables: { id: userId },
+              data
+            })
+          }
+        })
+
+        console.log('created org')
+        this.dialog = false
+      } catch (error) {
+        console.error(error)
+      }
     }
   }
 }
@@ -19,17 +79,10 @@ export default {
         <v-container grid-list-md>
           <v-layout wrap>
             <v-flex xs12>
-              <v-text-field label="Name" required />
+              <v-text-field v-model="name" label="Name" required />
             </v-flex>
             <v-flex xs12>
-              <v-text-field label="Website" required />
-            </v-flex>
-            <v-flex xs12>
-              <v-select
-                label="Number of Employees"
-                required
-                :items="['1-10', '11-50', '50-500', '500-2000', '2000+']"
-              />
+              <v-text-field v-model="website" label="Website" />
             </v-flex>
           </v-layout>
         </v-container>
@@ -38,7 +91,7 @@ export default {
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="grey darken-1" flat @click.native="dialog = false">Cancel</v-btn>
-        <v-btn color="green" flat @click.native="dialog = false">Create</v-btn>
+        <v-btn color="green" flat @click.native="createOrganization">Create</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

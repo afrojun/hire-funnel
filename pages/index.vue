@@ -8,6 +8,8 @@ export default {
     return { title: 'Index' }
   },
 
+  middleware: 'hasOrg',
+
   components: {
     Home
   }

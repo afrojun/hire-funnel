@@ -1,0 +1,11 @@
+#import '~/graphql/candidates'
+
+fragment FunnelFields on Funnel {
+  slug
+  jobTitle
+  description
+  sla
+  candidates {
+    ...CandidateFields
+  }
+}
