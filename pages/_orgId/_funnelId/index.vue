@@ -1,5 +1,5 @@
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   name: 'Funnel',
@@ -11,11 +11,7 @@ export default {
   middleware: 'authenticated',
 
   computed: {
-    ...mapState(['user', 'organization'])
-  },
-
-  methods: {
-    ...mapMutations(['setFunnel'])
+    ...mapState(['user'])
   },
 
   updated () {

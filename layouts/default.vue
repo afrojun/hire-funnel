@@ -1,7 +1,7 @@
 <script>
 import { mapState, mapMutations } from 'vuex'
 import routeMixin from '~/lib/routeMixin'
-import { webAuth } from '~/utils/auth'
+import { webAuth, getUserIdFromLocalStorage } from '~/utils/auth'
 import { UserQuery } from '~/graphql/users'
 import EventBus from '~/utils/eventBus'
 
@@ -15,6 +15,10 @@ export default {
   mixins: [routeMixin],
 
   mounted () {
+    if (!this.userId) {
+      this.userId = getUserIdFromLocalStorage()
+    }
+
     EventBus.$on('FetchUser', ({ id }) => {
       this.userId = id
     })
@@ -43,11 +47,11 @@ export default {
   },
 
   computed: {
-    ...mapState(['user', 'organization'])
+    ...mapState(['user'])
   },
 
   methods: {
-    ...mapMutations(['setUser', 'setOrganization']),
+    ...mapMutations(['setUser']),
 
     authenticateUser () {
       console.log('authenticateUser')

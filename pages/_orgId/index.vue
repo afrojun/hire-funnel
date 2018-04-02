@@ -13,7 +13,7 @@ export default {
   middleware: 'authenticated',
 
   computed: {
-    ...mapState(['user', 'organization'])
+    ...mapState(['user'])
   },
 
   methods: {
@@ -31,12 +31,12 @@ export default {
 </script>
 
 <template>
-  <v-layout column v-if="organization && isOrgIndexRoute">
+  <v-layout column v-if="user && user.organization && isOrgIndexRoute">
     <v-flex xs12 sm6>
       <v-container fluid grid-list-md>
         <v-layout row wrap>
           <v-flex xs12 sm6 md3
-            v-for="funnel in organization.funnels" :key="funnel.slug">
+            v-for="funnel in user.organization.funnels" :key="funnel.slug">
             <v-card hover :to="funnelRoute(funnel.slug)">
               <v-card-title primary-title>
                 <div>

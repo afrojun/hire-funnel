@@ -11,7 +11,7 @@ export default {
   middleware: 'authenticated',
 
   computed: {
-    ...mapState(['user', 'organization'])
+    ...mapState(['user'])
   }
 }
 </script>
