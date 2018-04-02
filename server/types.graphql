@@ -60,8 +60,6 @@ type Funnel @model {
   organization: Organization! @relation(name: "OrganizationFunnels")
   # User with authority to override decisions and break ties
   manager: User! @relation(name: "FunnelManagers")
-  offerStage: Stage @relation(name: "OfferStageOfFunnel")
-  rejectionStage: Stage @relation(name: "RejectionStageOfFunnel")
   # Start-to-finish SLA for a given candidate (2-week default)
   sla: Int! @defaultValue(value: 1209600)
   offerEmailTemplate: String!
@@ -72,12 +70,15 @@ type Funnel @model {
 
   stages: [Stage!]! @relation(name: "FunnelStages")
   candidates: [Candidate!]! @relation(name: "FunnelCandidates")
+  offeredCandidates: [Candidate!]! @relation(name: "OfferedCandidates")
+  rejectedCandidates: [Candidate!]! @relation(name: "RejectedCandidates")
 }
 
 enum AdvancePolicy {
   Unanimous,
   Majority,
-  Override # Hiring manager decision
+  Override, # Hiring manager decision
+  None
 }
 
 # A particular round of interviews
@@ -95,13 +96,15 @@ type Stage @model {
 
   candidates: [Candidate!]! @relation(name: "StageCandidates")
   interviews: [Interview!]! @relation(name: "StageInterviews")
-  offerStageFunnel: Funnel @relation(name: "OfferStageOfFunnel")
-  rejectionStageFunnel: Funnel @relation(name: "RejectionStageOfFunnel")
 }
 
 # A candidate that has applied for a particular role and is in a funnel
 type Candidate @model {
   id: ID! @isUnique
+  firstName: String!
+  lastName: String!
+  email: String!
+  cellNumber: String
   funnel: Funnel! @relation(name: "FunnelCandidates")
   stage: Stage! @relation(name: "StageCandidates")
   feedback: CandidateFeedback @relation(name: "FeedbackOfCandidate")
@@ -109,6 +112,8 @@ type Candidate @model {
   updatedAt: DateTime!
 
   interviews: [Interview!]! @relation(name: "CandidateInterviews")
+  offerFunnel: Funnel @relation(name: "OfferedCandidates")
+  rejectionFunnel: Funnel @relation(name: "RejectedCandidates")
 }
 
 type Interview @model {

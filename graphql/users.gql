@@ -1,13 +1,17 @@
 #import '~/graphql/organizations'
 
-fragment UserFields on User {
+fragment SimpleUserFields on User {
   id
-  auth0UserId
   email
   slug
   firstName
   lastName
   nickname
+}
+
+fragment UserFields on User {
+  ...SimpleUserFields
+  auth0UserId
   locale
   timeZone
   role

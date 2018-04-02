@@ -1,0 +1,8 @@
+
+fragment StageFields on Stage {
+  id
+  name
+  description
+  advancePolicy
+  sla
+}

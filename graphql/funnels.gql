@@ -1,11 +1,55 @@
 #import '~/graphql/candidates'
+#import '~/graphql/stages'
 
 fragment FunnelFields on Funnel {
   slug
   jobTitle
   description
   sla
+  offerEmailTemplate
+  rejectionEmailTemplate
+  status
+  manager {
+    id
+    slug
+    firstName
+    lastName
+    nickname
+  }
   candidates {
     ...CandidateFields
+  }
+  offeredCandidates {
+    ...CandidateFields
+  }
+  rejectedCandidates {
+    ...CandidateFields
+  }
+  stages {
+    ...StageFields
+  }
+}
+
+mutation CreateFunnel(
+  $jobTitle: String!
+  $slug: String!
+  $description: String
+  $organizationId: ID!
+  $offerEmailTemplate: String!
+  $rejectionEmailTemplate: String!
+  $sla: Int
+  $managerId: ID!
+) {
+  createFunnel(
+    jobTitle: $jobTitle
+    slug: $slug
+    description: $description
+    organizationId: $organizationId
+    offerEmailTemplate: $offerEmailTemplate
+    rejectionEmailTemplate: $rejectionEmailTemplate
+    sla: $sla
+    managerId: $managerId
+  ) {
+    ...FunnelFields
   }
 }

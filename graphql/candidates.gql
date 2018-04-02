@@ -1,3 +1,12 @@
 fragment CandidateFields on Candidate {
   id
+  firstName
+  lastName
+  email
+  cellNumber
+  feedback {
+    id
+    feedback
+    sentiment
+  }
 }

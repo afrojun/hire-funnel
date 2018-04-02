@@ -5,6 +5,14 @@ fragment OrganizationFields on Organization {
   slug
   name
   website
+  users {
+    id
+    slug
+    firstName
+    lastName
+    email
+    nickname
+  }
   funnels {
     ...FunnelFields
   }

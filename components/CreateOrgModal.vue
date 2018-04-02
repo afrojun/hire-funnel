@@ -1,8 +1,7 @@
 <script>
 import shortid from 'shortid'
-import CreateOrganization from '~/graphql/organizations'
+import { CreateOrganization } from '~/graphql/organizations'
 import { UserQuery } from '~/graphql/users'
-import routeMixin from '~/mixins/routeMixin'
 import slugify from '~/utils/slugify'
 
 export default {
@@ -21,8 +20,6 @@ export default {
       slugSuffix: shortid.generate()
     }
   },
-
-  mixins: [routeMixin],
 
   computed: {
     slug () {
@@ -70,7 +67,13 @@ export default {
 
 <template>
   <v-dialog v-model="dialog" persistent max-width="500">
-    <v-btn large color="green" dark slot="activator">Supercharge your hiring plan!</v-btn>
+    <v-btn
+      large
+      color="green"
+      dark
+      slot="activator">
+      Supercharge your hiring plan!
+    </v-btn>
     <v-card>
       <v-card-title>
         <span class="headline">Your Organization</span>
