@@ -1,7 +1,6 @@
 # In the types.graphql you define your data schema
 types: ./types.graphql
 
-
 functions:
 
   # added by auth0 template: (please uncomment)
@@ -29,4 +28,3 @@ permissions:
 # https://www.graph.cool/docs/reference/auth/authentication/authentication-tokens-eip7ahqu5o
 # rootTokens:
 #   - mytoken
-
