@@ -17,7 +17,5 @@ export default {
 </script>
 
 <template>
-  <div>
-    <p>Hello {{ user.firstName }}</p>
-  </div>
+  <div class="headline">Hello {{ user.firstName }}</div>
 </template>

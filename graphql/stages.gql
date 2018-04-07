@@ -1,3 +1,4 @@
+#import '~/graphql/candidates'
 
 fragment StageFields on Stage {
   id
@@ -5,4 +6,44 @@ fragment StageFields on Stage {
   description
   advancePolicy
   sla
+  candidates {
+    ...CandidateFields
+  }
+  interviews {
+    id
+  }
+}
+
+mutation CreateStage(
+  $name: String!
+  $funnelId: ID!
+  $index: Int!
+) {
+  createStage(
+    name: $name
+    funnelId: $funnelId
+    index: $index
+  ) {
+    ...StageFields
+  }
+}
+
+mutation UpdateStage(
+  $id: ID!
+  $name: String
+  $index: Int
+  $description: String
+  $sla: Int
+  $advancePolicy: AdvancePolicy
+) {
+  updateStage(
+    id: $id
+    name: $name
+    index: $index
+    description: $description
+    sla: $sla
+    advancePolicy: $advancePolicy
+  ) {
+    ...StageFields
+  }
 }

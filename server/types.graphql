@@ -84,9 +84,10 @@ enum AdvancePolicy {
 # A particular round of interviews
 type Stage @model {
   id: ID! @isUnique
-  funnel: Funnel! @relation(name: "FunnelStages")
-  nextStage: Stage @relation(name: "NextStageOfFunnel")
   name: String!
+  funnel: Funnel! @relation(name: "FunnelStages")
+  index: Int!
+  nextStage: Stage @relation(name: "NextStageOfFunnel")
   description: String
   # SLA for a particular stage (24-hours default)
   sla: Int! @defaultValue(value: 86400)

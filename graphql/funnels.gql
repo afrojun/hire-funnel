@@ -2,6 +2,7 @@
 #import '~/graphql/stages'
 
 fragment FunnelFields on Funnel {
+  id
   slug
   jobTitle
   description
@@ -17,7 +18,7 @@ fragment FunnelFields on Funnel {
     nickname
   }
   candidates {
-    ...CandidateFields
+    id
   }
   offeredCandidates {
     ...CandidateFields

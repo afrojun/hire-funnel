@@ -13,34 +13,34 @@ export default {
 
   middleware: 'authenticated',
 
+  mixins: [routeMixin],
+
   components: {
     CreateFunnelModal
   },
 
   computed: {
-    ...mapState(['user'])
+    ...mapState(['user']),
+
+    organization () {
+      return this.user && this.user.organization
+    }
   },
 
   methods: {
     formatSLA (sla) {
       return moment.duration(sla, 'seconds').humanize()
     }
-  },
-
-  updated () {
-    console.log(this.$route.name)
-  },
-
-  mixins: [routeMixin]
+  }
 }
 </script>
 
 <template>
-  <v-layout column v-if="user && user.organization">
+  <v-layout column v-if="organization">
     <v-flex xs12 sm6>
       <v-container fluid grid-list-md>
         <v-layout row wrap>
-          <v-flex xs12 sm6 md3 v-for="funnel in user.organization.funnels" :key="funnel.slug" >
+          <v-flex xs12 sm6 md3 v-for="funnel in organization.funnels" :key="funnel.slug" >
             <v-card hover :to="funnelRoute(funnel.slug)">
               <v-card-title primary-title>
                 <div>
