@@ -1,5 +1,5 @@
 <script>
-import { UpdateStage } from '~/graphql/stages'
+import { CreateStage } from '~/graphql/stages'
 import { UserQuery } from '~/graphql/users'
 
 import StageForm from '~/components/StageForm'
@@ -10,11 +10,7 @@ export default {
       type: Object,
       required: true
     },
-    funnelId: {
-      type: String,
-      required: true
-    },
-    stage: {
+    funnel: {
       type: Object,
       required: true
     }
@@ -30,37 +26,38 @@ export default {
     }
   },
 
+  computed: {
+    nextIndex () {
+      return this.funnel.stages.length
+    }
+  },
+
   methods: {
     closeModal () {
       this.dialog = false
     },
 
-    async updateStage (stageVars) {
+    async createStage (stageVars) {
       try {
-        const funnelId = this.funnelId
-        const stageId = this.stage.id
+        const funnelId = this.funnel.id
         const userId = this.user.id
 
         await this.$apollo.mutate({
-          mutation: UpdateStage,
+          mutation: CreateStage,
           variables: {
-            id: this.stage.id,
+            funnelId: this.funnel.id,
+            index: this.nextIndex,
             ...stageVars
           },
-          update (store, { data: { updateStage } }) {
-            console.log(updateStage)
+          update (store, { data: { createStage } }) {
+            console.log(createStage)
             const data = store.readQuery({
               query: UserQuery,
               variables: { id: userId }
             })
 
-            console.log(data)
             const funnel = data.user.organization.funnels.find(funnel => funnel.id === funnelId)
-            console.log(funnel)
-            funnel.stages = funnel.stages.map(stage => {
-              return stage.id === stageId ? updateStage : stage
-            })
-            console.log(funnel)
+            funnel.stages.push(createStage)
 
             store.writeQuery({
               query: UserQuery,
@@ -70,7 +67,7 @@ export default {
           }
         })
 
-        console.log('updated stage')
+        console.log('created stage')
         this.dialog = false
       } catch (error) {
         console.error(error)
@@ -83,18 +80,17 @@ export default {
 <template>
   <v-dialog v-model="dialog" persistent max-width="500">
     <v-btn
-      small
-      color="teal"
+      color="purple"
       dark
       slot="activator">
-      Update
+      Create Stage
     </v-btn>
     <stage-form
       :user="user"
-      :stage="stage"
-      :submitFn="updateStage"
-      submitText="Update"
-      headline="Update Stage"
+      :funnelId="funnel.id"
+      :submitFn="createStage"
+      submitText="Create"
+      headline="Create Stage"
       :cancelFn="closeModal" />
   </v-dialog>
 </template>

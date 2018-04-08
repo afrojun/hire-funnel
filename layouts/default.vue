@@ -80,7 +80,7 @@ export default {
 <template>
   <v-app light>
     <v-toolbar fixed app>
-      <v-btn flat @click.prevent="$router.push(primaryNavRoute)">
+      <v-btn flat @click="$router.push(primaryNavRoute)">
         H<v-icon x-large class="flip-vertical" color="purple">merge_type</v-icon>F
       </v-btn>
       <v-spacer />
@@ -88,10 +88,10 @@ export default {
         <span class="username">
           {{ `${user.firstName[0]}. ${user.lastName}` }}
         </span>
-        <v-btn icon @click.prevent="$router.push(userRoute)">
+        <v-btn icon @click="$router.push(userRoute)">
           <v-icon medium>face</v-icon>
         </v-btn>
-        <v-btn icon @click.prevent="$router.push(logoutRoute)">
+        <v-btn icon @click="$router.push(logoutRoute)">
           <v-icon medium>exit_to_app</v-icon>
         </v-btn>
       </span>
@@ -102,11 +102,6 @@ export default {
     <v-content>
       <nuxt />
     </v-content>
-    <v-footer fixed app>
-      <v-spacer />
-      <span>&copy; 2018 Hire Funnel</span>
-      <v-spacer />
-    </v-footer>
   </v-app>
 </template>
 

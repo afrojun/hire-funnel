@@ -2,34 +2,38 @@ import Vue from 'vue'
 import {
   Vuetify,
   VApp,
-  VCard,
-  VParallax,
-  VDialog,
-  VTextField,
-  VSelect,
-  VNavigationDrawer,
-  VFooter,
-  VList,
   VBtn,
-  VIcon,
+  VCard,
+  VDialog,
+  VExpansionPanel,
+  VFooter,
   VGrid,
-  VToolbar
+  VIcon,
+  VList,
+  VNavigationDrawer,
+  VParallax,
+  VSelect,
+  VTextField,
+  VToolbar,
+  VTooltip
 } from 'vuetify'
 
 Vue.use(Vuetify, {
   components: {
     VApp,
-    VCard,
-    VParallax,
-    VDialog,
-    VTextField,
-    VSelect,
-    VNavigationDrawer,
-    VFooter,
-    VList,
     VBtn,
-    VIcon,
+    VCard,
+    VDialog,
+    VExpansionPanel,
+    VFooter,
     VGrid,
-    VToolbar
+    VIcon,
+    VList,
+    VNavigationDrawer,
+    VParallax,
+    VSelect,
+    VTextField,
+    VToolbar,
+    VTooltip
   }
 })

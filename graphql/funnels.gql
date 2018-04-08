@@ -54,3 +54,35 @@ mutation CreateFunnel(
     ...FunnelFields
   }
 }
+
+mutation UpdateFunnel(
+  $id: ID!
+  $jobTitle: String
+  $description: String
+  $offerEmailTemplate: String
+  $rejectionEmailTemplate: String
+  $sla: Int
+  $managerId: ID
+) {
+  updateFunnel(
+    id: $id
+    jobTitle: $jobTitle
+    description: $description
+    offerEmailTemplate: $offerEmailTemplate
+    rejectionEmailTemplate: $rejectionEmailTemplate
+    sla: $sla
+    managerId: $managerId
+  ) {
+    ...FunnelFields
+  }
+}
+
+mutation DeleteFunnel(
+  $id: ID!
+) {
+  deleteFunnel(
+    id: $id
+  ) {
+    id
+  }
+}

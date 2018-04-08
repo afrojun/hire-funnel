@@ -47,3 +47,13 @@ mutation UpdateStage(
     ...StageFields
   }
 }
+
+mutation DeleteStage(
+  $id: ID!
+) {
+  deleteStage(
+    id: $id
+  ) {
+    id
+  }
+}

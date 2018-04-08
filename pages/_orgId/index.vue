@@ -1,8 +1,15 @@
 <script>
 import moment from 'moment'
+import { remove } from 'lodash'
 import { mapState } from 'vuex'
-import CreateFunnelModal from '~/components/CreateFunnelModal'
+
 import routeMixin from '~/mixins/routeMixin'
+
+import { DeleteFunnel } from '~/graphql/funnels'
+import { UserQuery } from '~/graphql/users'
+
+import CreateFunnelModal from '~/components/CreateFunnelModal'
+import UpdateFunnelModal from '~/components/UpdateFunnelModal'
 
 export default {
   name: 'Organization',
@@ -16,7 +23,8 @@ export default {
   mixins: [routeMixin],
 
   components: {
-    CreateFunnelModal
+    CreateFunnelModal,
+    UpdateFunnelModal
   },
 
   computed: {
@@ -29,8 +37,76 @@ export default {
 
   methods: {
     formatSLA (sla) {
-      return moment.duration(sla, 'seconds').humanize()
+      return `${moment.duration(sla, 'seconds').asDays()} days`
+    },
+
+    async updateFunnel (funnel) {
+      try {
+        const userId = this.user.id
+
+        await this.$apollo.mutate({
+          mutation: DeleteFunnel,
+          variables: { id: funnel.id },
+          update (store, { data: { updateFunnel } }) {
+            console.log(updateFunnel)
+            const data = store.readQuery({
+              query: UserQuery,
+              variables: { id: userId }
+            })
+
+            console.log(data)
+            remove(data.user.organization.funnels, funnel => {
+              return funnel.id === updateFunnel.id
+            })
+            console.log(data)
+
+            store.writeQuery({
+              query: UserQuery,
+              variables: { id: userId },
+              data
+            })
+          }
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    },
+
+    async deleteFunnel (funnel) {
+      try {
+        const userId = this.user.id
+
+        await this.$apollo.mutate({
+          mutation: DeleteFunnel,
+          variables: { id: funnel.id },
+          update (store, { data: { deleteFunnel } }) {
+            console.log(deleteFunnel)
+            const data = store.readQuery({
+              query: UserQuery,
+              variables: { id: userId }
+            })
+
+            console.log(data)
+            remove(data.user.organization.funnels, funnel => {
+              return funnel.id === deleteFunnel.id
+            })
+            console.log(data)
+
+            store.writeQuery({
+              query: UserQuery,
+              variables: { id: userId },
+              data
+            })
+          }
+        })
+      } catch (error) {
+        console.log(error)
+      }
     }
+  },
+
+  mounted () {
+    console.log(this.$refs)
   }
 }
 </script>
@@ -38,7 +114,7 @@ export default {
 <template>
   <v-layout column v-if="organization">
     <v-flex xs12 sm6>
-      <v-container fluid grid-list-md>
+      <v-container grid-list-md>
         <v-layout row wrap>
           <v-flex xs12 sm6 md3 v-for="funnel in organization.funnels" :key="funnel.slug" >
             <v-card hover :to="funnelRoute(funnel.slug)">
@@ -47,15 +123,27 @@ export default {
                   <div class="headline">{{ funnel.jobTitle }}</div>
                 </div>
               </v-card-title>
+
               <v-card-text>
-                <div>{{ funnel.description }}</div>
+                <div>{{ funnel.description || '-' }}</div>
                 <div class="grey--text"># Candidates: {{ funnel.candidates.length }}</div>
+                <div class="grey--text"># Stages: {{ funnel.stages.length }}</div>
                 <div class="grey--text">SLA: {{ formatSLA(funnel.sla) }}</div>
               </v-card-text>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <update-funnel-modal :user="user" :funnel="funnel" />
+                <v-btn
+                  icon small dark color="red lighten-2"
+                  @click.prevent="deleteFunnel(funnel)">
+                  <v-icon>remove</v-icon>
+                </v-btn>
+              </v-card-actions>
             </v-card>
           </v-flex>
-            <create-funnel-modal :user="user"/>
         </v-layout>
+        <create-funnel-modal :user="user"/>
       </v-container>
     </v-flex>
   </v-layout>
