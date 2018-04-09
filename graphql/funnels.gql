@@ -1,15 +1,19 @@
 #import '~/graphql/candidates'
 #import '~/graphql/stages'
 
-fragment FunnelFields on Funnel {
+fragment SimpleFunnelFields on Funnel {
   id
   slug
   jobTitle
   description
   sla
+  status
+}
+
+fragment FunnelFields on Funnel {
+  ...SimpleFunnelFields
   offerEmailTemplate
   rejectionEmailTemplate
-  status
   manager {
     id
     slug

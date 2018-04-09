@@ -1,15 +1,16 @@
 <script>
-import shortid from 'shortid'
-import slugify from '~/utils/slugify'
-
-import { CreateFunnel } from '~/graphql/funnels'
+import { UpdateFunnel } from '~/graphql/funnels'
 import { UserQuery } from '~/graphql/users'
 
-import FunnelForm from '~/components/FunnelForm'
+import FunnelForm from '~/components/funnel/FunnelForm'
 
 export default {
   props: {
     user: {
+      required: true,
+      type: Object
+    },
+    funnel: {
       required: true,
       type: Object
     }
@@ -21,14 +22,7 @@ export default {
 
   data () {
     return {
-      dialog: false,
-      slugSuffix: shortid.generate()
-    }
-  },
-
-  computed: {
-    slug () {
-      return `${slugify(this.jobTitle)}-${this.slugSuffix}`
+      dialog: false
     }
   },
 
@@ -37,24 +31,25 @@ export default {
       this.dialog = false
     },
 
-    async createFunnel (formVars) {
+    async updateFunnel (formVars) {
       try {
         const userId = this.user.id
+
         await this.$apollo.mutate({
-          mutation: CreateFunnel,
+          mutation: UpdateFunnel,
           variables: {
-            slug: this.slug,
-            organizationId: this.user.organization.id,
+            id: this.funnel.id,
             ...formVars
           },
-          update (store, { data: { createFunnel } }) {
-            console.log(createFunnel)
+          update (store, { data: { updateFunnel } }) {
             const data = store.readQuery({
               query: UserQuery,
               variables: { id: userId }
             })
 
-            data.user.organization.funnels.push(createFunnel)
+            data.user.organization.funnels = data.user.organization.funnels.map(funnel => {
+              return funnel.id === updateFunnel.id ? updateFunnel : funnel
+            })
 
             store.writeQuery({
               query: UserQuery,
@@ -64,7 +59,6 @@ export default {
           }
         })
 
-        console.log('created funnel')
         this.dialog = false
       } catch (error) {
         console.error(error)
@@ -77,18 +71,17 @@ export default {
 <template>
   <v-dialog v-model="dialog" max-width="500">
     <v-btn
-      large
-      color="purple"
-      dark
+      icon small dark color="green lighten-2"
       slot="activator">
-      Add funnel
+      <v-icon>edit</v-icon>
     </v-btn>
     <funnel-form
       :user="user"
-      headline="Create a Funnel"
-      :submitFn="createFunnel"
+      :funnel="funnel"
+      headline="Update a Funnel"
+      :submitFn="updateFunnel"
       :cancelFn="closeModal"
-      submitText="Create"/>
+      submitText="Update"/>
 
   </v-dialog>
 </template>

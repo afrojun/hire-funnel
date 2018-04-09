@@ -1,5 +1,6 @@
 <script>
 import moment from 'moment'
+import vuetifyToast from 'vuetify-toast'
 import { remove } from 'lodash'
 import { mapState } from 'vuex'
 
@@ -8,8 +9,8 @@ import routeMixin from '~/mixins/routeMixin'
 import { DeleteFunnel } from '~/graphql/funnels'
 import { UserQuery } from '~/graphql/users'
 
-import CreateFunnelModal from '~/components/CreateFunnelModal'
-import UpdateFunnelModal from '~/components/UpdateFunnelModal'
+import CreateFunnelModal from '~/components/funnel/CreateFunnelModal'
+import UpdateFunnelModal from '~/components/funnel/UpdateFunnelModal'
 
 export default {
   name: 'Organization',
@@ -48,17 +49,14 @@ export default {
           mutation: DeleteFunnel,
           variables: { id: funnel.id },
           update (store, { data: { updateFunnel } }) {
-            console.log(updateFunnel)
             const data = store.readQuery({
               query: UserQuery,
               variables: { id: userId }
             })
 
-            console.log(data)
             remove(data.user.organization.funnels, funnel => {
               return funnel.id === updateFunnel.id
             })
-            console.log(data)
 
             store.writeQuery({
               query: UserQuery,
@@ -68,7 +66,7 @@ export default {
           }
         })
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     },
 
@@ -80,17 +78,14 @@ export default {
           mutation: DeleteFunnel,
           variables: { id: funnel.id },
           update (store, { data: { deleteFunnel } }) {
-            console.log(deleteFunnel)
             const data = store.readQuery({
               query: UserQuery,
               variables: { id: userId }
             })
 
-            console.log(data)
             remove(data.user.organization.funnels, funnel => {
               return funnel.id === deleteFunnel.id
             })
-            console.log(data)
 
             store.writeQuery({
               query: UserQuery,
@@ -100,13 +95,13 @@ export default {
           }
         })
       } catch (error) {
-        console.log(error)
+        console.error(error)
+        vuetifyToast.error('Unable to delete this funnel')
       }
     }
   },
 
   mounted () {
-    console.log(this.$refs)
   }
 }
 </script>

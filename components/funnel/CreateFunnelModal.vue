@@ -1,16 +1,15 @@
 <script>
-import { UpdateFunnel } from '~/graphql/funnels'
+import shortid from 'shortid'
+import slugify from '~/utils/slugify'
+
+import { CreateFunnel } from '~/graphql/funnels'
 import { UserQuery } from '~/graphql/users'
 
-import FunnelForm from '~/components/FunnelForm'
+import FunnelForm from '~/components/funnel/FunnelForm'
 
 export default {
   props: {
     user: {
-      required: true,
-      type: Object
-    },
-    funnel: {
       required: true,
       type: Object
     }
@@ -22,7 +21,14 @@ export default {
 
   data () {
     return {
-      dialog: false
+      dialog: false,
+      slugSuffix: shortid.generate()
+    }
+  },
+
+  computed: {
+    slug () {
+      return `${slugify(this.jobTitle)}-${this.slugSuffix}`
     }
   },
 
@@ -31,28 +37,23 @@ export default {
       this.dialog = false
     },
 
-    async updateFunnel (formVars) {
+    async createFunnel (formVars) {
       try {
         const userId = this.user.id
-
         await this.$apollo.mutate({
-          mutation: UpdateFunnel,
+          mutation: CreateFunnel,
           variables: {
-            id: this.funnel.id,
+            slug: this.slug,
+            organizationId: this.user.organization.id,
             ...formVars
           },
-          update (store, { data: { updateFunnel } }) {
-            console.log(updateFunnel)
+          update (store, { data: { createFunnel } }) {
             const data = store.readQuery({
               query: UserQuery,
               variables: { id: userId }
             })
 
-            console.log(data)
-            data.user.organization.funnels = data.user.organization.funnels.map(funnel => {
-              return funnel.id === updateFunnel.id ? updateFunnel : funnel
-            })
-            console.log(data)
+            data.user.organization.funnels.push(createFunnel)
 
             store.writeQuery({
               query: UserQuery,
@@ -62,7 +63,6 @@ export default {
           }
         })
 
-        console.log('updated funnel')
         this.dialog = false
       } catch (error) {
         console.error(error)
@@ -75,17 +75,18 @@ export default {
 <template>
   <v-dialog v-model="dialog" max-width="500">
     <v-btn
-      icon small dark color="green lighten-2"
+      large
+      color="purple"
+      dark
       slot="activator">
-      <v-icon>edit</v-icon>
+      Add funnel
     </v-btn>
     <funnel-form
       :user="user"
-      :funnel="funnel"
-      headline="Update a Funnel"
-      :submitFn="updateFunnel"
+      headline="Create a Funnel"
+      :submitFn="createFunnel"
       :cancelFn="closeModal"
-      submitText="Update"/>
+      submitText="Create"/>
 
   </v-dialog>
 </template>

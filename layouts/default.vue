@@ -85,7 +85,7 @@ export default {
       </v-btn>
       <v-spacer />
       <span v-if="user">
-        <span class="username">
+        <span class="username hidden-xs-only">
           {{ `${user.firstName[0]}. ${user.lastName}` }}
         </span>
         <v-btn icon @click="$router.push(userRoute)">

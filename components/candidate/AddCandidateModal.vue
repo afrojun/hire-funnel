@@ -1,8 +1,8 @@
 <script>
-import { UpdateStage } from '~/graphql/stages'
+import { CreateCandidate } from '~/graphql/candidates'
 import { UserQuery } from '~/graphql/users'
 
-import StageForm from '~/components/StageForm'
+import CandidateForm from '~/components/candidate/CandidateForm'
 
 export default {
   props: {
@@ -10,18 +10,14 @@ export default {
       type: Object,
       required: true
     },
-    funnelId: {
-      type: String,
-      required: true
-    },
-    stage: {
+    funnel: {
       type: Object,
       required: true
     }
   },
 
   components: {
-    StageForm
+    CandidateForm
   },
 
   data () {
@@ -30,37 +26,38 @@ export default {
     }
   },
 
+  computed: {
+    nextIndex () {
+      return this.funnel.stages.length
+    }
+  },
+
   methods: {
     closeModal () {
       this.dialog = false
     },
 
-    async updateStage (stageVars) {
+    async createCandidate (candidateVars) {
       try {
-        const funnelId = this.funnelId
-        const stageId = this.stage.id
+        const funnelId = this.funnel.id
         const userId = this.user.id
 
         await this.$apollo.mutate({
-          mutation: UpdateStage,
+          mutation: CreateCandidate,
           variables: {
-            id: this.stage.id,
-            ...stageVars
+            funnelId: this.funnel.id,
+            stageId: this.funnel.stages[0].id,
+            ...candidateVars
           },
-          update (store, { data: { updateStage } }) {
-            console.log(updateStage)
+          update (store, { data: { createCandidate } }) {
             const data = store.readQuery({
               query: UserQuery,
               variables: { id: userId }
             })
 
-            console.log(data)
             const funnel = data.user.organization.funnels.find(funnel => funnel.id === funnelId)
-            console.log(funnel)
-            funnel.stages = funnel.stages.map(stage => {
-              return stage.id === stageId ? updateStage : stage
-            })
-            console.log(funnel)
+            funnel.candidates.push(createCandidate)
+            funnel.stages[0].candidates.push(createCandidate)
 
             store.writeQuery({
               query: UserQuery,
@@ -70,7 +67,6 @@ export default {
           }
         })
 
-        console.log('updated stage')
         this.dialog = false
       } catch (error) {
         console.error(error)
@@ -83,18 +79,17 @@ export default {
 <template>
   <v-dialog v-model="dialog" persistent max-width="500">
     <v-btn
-      small
-      color="teal"
+      color="green"
       dark
       slot="activator">
-      Update
+      Add Candidate
     </v-btn>
-    <stage-form
+    <candidate-form
       :user="user"
-      :stage="stage"
-      :submitFn="updateStage"
-      submitText="Update"
-      headline="Update Stage"
+      :funnelId="funnel.id"
+      :submitFn="createCandidate"
+      submitText="Create"
+      headline="Create Candidate"
       :cancelFn="closeModal" />
   </v-dialog>
 </template>

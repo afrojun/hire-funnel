@@ -2,7 +2,7 @@
 import { mapState } from 'vuex'
 import { webAuth } from '~/utils/auth'
 import routeMixin from '~/mixins/routeMixin'
-import CreateOrgModal from '~/components/CreateOrgModal'
+import CreateOrgModal from '~/components/organization/CreateOrgModal'
 
 export default {
   components: {

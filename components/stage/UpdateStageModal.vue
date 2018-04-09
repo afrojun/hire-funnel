@@ -1,8 +1,8 @@
 <script>
-import { CreateStage } from '~/graphql/stages'
+import { UpdateStage } from '~/graphql/stages'
 import { UserQuery } from '~/graphql/users'
 
-import StageForm from '~/components/StageForm'
+import StageForm from '~/components/stage/StageForm'
 
 export default {
   props: {
@@ -10,7 +10,11 @@ export default {
       type: Object,
       required: true
     },
-    funnel: {
+    funnelId: {
+      type: String,
+      required: true
+    },
+    stage: {
       type: Object,
       required: true
     }
@@ -26,38 +30,33 @@ export default {
     }
   },
 
-  computed: {
-    nextIndex () {
-      return this.funnel.stages.length
-    }
-  },
-
   methods: {
     closeModal () {
       this.dialog = false
     },
 
-    async createStage (stageVars) {
+    async updateStage (stageVars) {
       try {
-        const funnelId = this.funnel.id
+        const funnelId = this.funnelId
+        const stageId = this.stage.id
         const userId = this.user.id
 
         await this.$apollo.mutate({
-          mutation: CreateStage,
+          mutation: UpdateStage,
           variables: {
-            funnelId: this.funnel.id,
-            index: this.nextIndex,
+            id: this.stage.id,
             ...stageVars
           },
-          update (store, { data: { createStage } }) {
-            console.log(createStage)
+          update (store, { data: { updateStage } }) {
             const data = store.readQuery({
               query: UserQuery,
               variables: { id: userId }
             })
 
             const funnel = data.user.organization.funnels.find(funnel => funnel.id === funnelId)
-            funnel.stages.push(createStage)
+            funnel.stages = funnel.stages.map(stage => {
+              return stage.id === stageId ? updateStage : stage
+            })
 
             store.writeQuery({
               query: UserQuery,
@@ -67,7 +66,6 @@ export default {
           }
         })
 
-        console.log('created stage')
         this.dialog = false
       } catch (error) {
         console.error(error)
@@ -78,19 +76,17 @@ export default {
 </script>
 
 <template>
-  <v-dialog v-model="dialog" persistent max-width="500">
-    <v-btn
-      color="purple"
-      dark
+  <v-dialog v-model="dialog" max-width="500">
+    <v-list-tile-title
       slot="activator">
-      Create Stage
-    </v-btn>
+      Update
+    </v-list-tile-title>
     <stage-form
       :user="user"
-      :funnelId="funnel.id"
-      :submitFn="createStage"
-      submitText="Create"
-      headline="Create Stage"
+      :stage="stage"
+      :submitFn="updateStage"
+      submitText="Update"
+      headline="Update Stage"
       :cancelFn="closeModal" />
   </v-dialog>
 </template>

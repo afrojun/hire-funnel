@@ -55,7 +55,6 @@ export default {
           }
         })
 
-        console.log('created org')
         this.dialog = false
       } catch (error) {
         console.error(error)

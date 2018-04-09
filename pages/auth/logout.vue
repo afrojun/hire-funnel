@@ -13,9 +13,7 @@ export default {
 
   mounted () {
     this.setUser({ user: null })
-    console.log('forgetting')
     forgetLoginData()
-    console.log('logout')
     logout()
   }
 }

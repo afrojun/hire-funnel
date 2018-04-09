@@ -4,6 +4,7 @@ fragment StageFields on Stage {
   id
   name
   description
+  index
   advancePolicy
   sla
   candidates {
@@ -18,11 +19,17 @@ mutation CreateStage(
   $name: String!
   $funnelId: ID!
   $index: Int!
+  $description: String
+  $sla: Int
+  $advancePolicy: AdvancePolicy
 ) {
   createStage(
     name: $name
     funnelId: $funnelId
     index: $index
+    description: $description
+    sla: $sla
+    advancePolicy: $advancePolicy
   ) {
     ...StageFields
   }

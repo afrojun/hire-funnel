@@ -12,10 +12,6 @@ export default {
 
   computed: {
     ...mapState(['user'])
-  },
-
-  updated () {
-    console.log(this.$route.name)
   }
 }
 </script>

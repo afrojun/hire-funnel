@@ -4,9 +4,69 @@ fragment CandidateFields on Candidate {
   lastName
   email
   cellNumber
+  interviews {
+    date
+    location
+    advanceDecision
+  }
   feedback {
     id
     feedback
     sentiment
   }
 }
+
+mutation CreateCandidate(
+  $firstName: String!
+  $lastName: String!
+  $email: String!
+  $cellNumber: String
+  $funnelId: ID!
+  $stageId: ID!
+) {
+  createCandidate(
+    firstName: $firstName
+    lastName: $lastName
+    email: $email
+    cellNumber: $cellNumber
+    funnelId: $funnelId
+    stageId: $stageId
+  ) {
+    ...CandidateFields
+  }
+}
+
+mutation UpdateCandidate(
+  $id: ID!
+  $firstName: String
+  $lastName: String
+  $email: String
+  $cellNumber: String
+  $stageId: ID
+  $feedback: CandidatefeedbackCandidateFeedback
+  $interviews: [CandidateinterviewsInterview!]
+) {
+  updateCandidate(
+    id: $id
+    firstName: $firstName
+    lastName: $lastName
+    email: $email
+    cellNumber: $cellNumber
+    stageId: $stageId
+    feedback: $feedback
+    interviews: $interviews
+  ) {
+    ...CandidateFields
+  }
+}
+
+mutation DeleteCandidate(
+  $id: ID!
+) {
+  deleteCandidate(
+    id: $id
+  ) {
+    id
+  }
+}
+
