@@ -99,9 +99,6 @@ export default {
         vuetifyToast.error('Unable to delete this funnel')
       }
     }
-  },
-
-  mounted () {
   }
 }
 </script>

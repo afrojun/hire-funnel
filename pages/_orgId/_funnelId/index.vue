@@ -10,6 +10,7 @@ import { UserQuery } from '~/graphql/users'
 
 import draggable from 'vuedraggable'
 import AddCandidateModal from '~/components/candidate/AddCandidateModal'
+import ScheduleInterviewModal from '~/components/candidate/ScheduleInterviewModal'
 import CreateStageModal from '~/components/stage/CreateStageModal'
 import UpdateStageModal from '~/components/stage/UpdateStageModal'
 
@@ -25,6 +26,7 @@ export default {
   components: {
     draggable,
     AddCandidateModal,
+    ScheduleInterviewModal,
     CreateStageModal,
     UpdateStageModal
   },
@@ -111,6 +113,9 @@ export default {
       <v-flex xs12>
         <p class="subheading">{{ funnel.description }}</p>
       </v-flex>
+      <v-flex xs12 class="text-xs-center text-sm-left">
+        <p class="title">Stages</p>
+      </v-flex>
       <v-flex xs12>
         <v-layout row>
           <v-flex xs6 sm3 md2 offset-sm6 offset-md8>
@@ -186,15 +191,37 @@ export default {
       </v-card-title>
 
       <v-slide-y-transition>
-        <v-card-text v-show="showStages[stage.id]">
+        <v-card-text class="grey lighten-4" v-show="showStages[stage.id]">
           {{ stage.description }}
           <v-container grid-list-md>
             <v-layout row wrap>
               <v-flex xs12 sm4 md3 lg2 v-for="candidate in stage.candidates" :key="candidate.id">
                 <v-card hover>
                   <v-card-title primary-title>
-                    <div class="body-1">{{ `${candidate.firstName} ${candidate.lastName}` }}</div>
+                    <div class="body-2">
+                      {{ `${candidate.firstName} ${candidate.lastName}` }}
+                    </div>
                   </v-card-title>
+                  <v-card-text>
+                    <div v-if="candidate.interviews.length > 0">
+                      Interviews:
+                      <div v-for="interview in candidate.interviews" :key="interview.id">
+                        <p>{{ interview.date }}</p>
+                      </div>
+                    </div>
+                    <div v-else>
+                      Schedule an interview for this candidate
+                    </div>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-flex xs4>
+                      <schedule-interview-modal
+                        :user="user"
+                        :funnelId="funnel.id"
+                        :stage="stage"
+                        :candidate="candidate" />
+                    </v-flex>
+                  </v-card-actions>
                 </v-card>
               </v-flex>
 
@@ -204,7 +231,15 @@ export default {
       </v-slide-y-transition>
     </v-card>
 
-    <create-stage-modal :user="user" :funnel="funnel"/>
-    <add-candidate-modal v-if="funnel.stages.length > 0" :user="user" :funnel="funnel"/>
+    <v-layout row>
+      <create-stage-modal :user="user" :funnel="funnel"/>
+      <add-candidate-modal v-if="funnel.stages.length > 0" :user="user" :funnel="funnel"/>
+    </v-layout>
   </v-container>
 </template>
+
+<style scoped>
+.stage {
+  background-color: gray;
+}
+</style>
